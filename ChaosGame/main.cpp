@@ -1,156 +1,187 @@
-#include <SFML/Graphics.hpp>
-#include <GL/gl.h>
-#include <unistd.h>
-#include "RectangleShape.hpp"
-#include <cstdlib>
-#include <time.h>
-#include <vector>
+// Chaos_Game.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//Eduardo and Jordan
+//Need text to user, user inut, (4), vector/array to hold point, vm,while,draw,
+
 #include <iostream>
+#include <sstream>
+#include <cstdlib>
+#include <SFML/Graphics.hpp>
+
 
 using namespace sf;
 using namespace std;
 
-/*void glVertex2v(RectangleShape v) //Mouse vector coords
+
+int main()
 {
-    glVertex2f(v.x, v.y);
-}
+    VideoMode vm(1920, 1080);                        //Make window
+    RenderWindow window(vm, "Chaos Game!!!", Style::Fullscreen);
 
-void drawVectorPoints(vector<RectangleShape> *v) //Function for adding Vertex points. Any amount is available.
-{
-    glBegin(GL_POINTS);
-    for(int i=0; i<v->size(); i++)
-        glVertex2v(v->at(i));
-    glEnd();
-}*/
+    Text text,dotText;                               //CREATE TEXT; ,,INSTRUCTION AND COUNTER 
+    Font font;
+    font.loadFromFile("fonts/KOMIKAP_.ttf");        
+    text.setFont(font);
+    text.setCharacterSize(25);
+    text.setPosition(10,10);
+    text.setFillColor(Color::White);
+    dotText = text;
+    dotText.setPosition(10, 140);
 
-void addPoints(vector<RectangleShape> *initial_points, vector<RectangleShape> *points, int add_points_count) //Chaos part, adds points at random in between vertexes
-{
-    for(int i=0; i<add_points_count; i++)
-        {
-            int rand_point = rand()%initial_points->size();
+    int dotCounter = 0, initialDotCounter = 0;                             //see how many clicks;
 
-            RectangleShape new_point = (points->at(points->size()-1) + 2.0*initial_points->at(rand_point))/3.f;
+    //dots
+    RectangleShape dot1;                            //Object to create dots
+    dot1.setSize( Vector2f (1,1));                  //dots1 used as base for first 4 clicks
+    dot1.setFillColor(Color::White);
+    vector<RectangleShape> dotList;
+    
+    int rng, rng2, rng3;                                        //rng number
 
-            points->push_back(new_point);
-        }
-}
+    bool acceptInput = true;                       //control input;
+   
+    Vector2f temp,temp2;    
 
-void addMiddlePoints(vector<RectangleShape> *points) //For extra function of adding instant midpoints between vertexes before starting the run
-{
-    int points_count = points->size();
+    Color pink(255, 0, 0);                          //COLORS!!!//was experimentin with values, var does not == color
+    Color blue(0, 0, 255);
+    Color green(0, 255, 0);
+    Color yellow(150, 150, 0);
+    Color purple(150, 0, 150);
 
-    for(int i=0; i<points_count-1; i++)
+
+
+    while (window.isOpen())                                         //Frame loop starts
     {
-        RectangleShape middle = (points->at(i) + points->at(i+1))/2.0;
-        points->push_back(middle);
-    }
-
-    RectangleShape middle = (points->at(0) + points->at(points_count-1))/2.0;
-    points->push_back(middle);
-}
-
-int main(int argc, char **argv)
-{
-    srand(time(NULL));
-
-    vector<RectangleShape> initial_points;
-
-    float delay = 100;
-
-    int add_points_count = 5;
-    if(argc > 1)
-        add_points_count = atoi(argv[1]);
-
-    Clock delay_timer;
-
-    vector<RectangleShape> points;
-
-	VideoMode vm(1920, 1080);
-    RenderWindow window(vm, "Chaos Game", Style::Fullscreen);
-
-    bool point_input_done = false;
-    bool left_click_pressed = false;
-    bool space_pressed = false;
-
-	RectangleShape dot1;
-	dot1.setSize(Vector2f(1,1));
-	dot1.setFillColor(Color::White);
-	int rng;
-
-	Font font;
-	font.loadFromFile("fonts/KOMIKAP_.ttf");
-	Text text;
-	text.setFont(font);
-	text.setString("Hello World");
-	text.setFillColor(Color::White);
-	text.setOutlineColor(Color::White);
-	text.setOutlineThickness(3.f);
-	text.setCharacterSize(100);
-	FloatRect text_rect = text.getLocalBounds();
-	text.setOrigin(floorf(text_rect.left + text_rect.width/5),floorf(text_rect.top + text_rect.height/5)); //sets origin of text
-	text.setPosition(50,50);
-	
-
-    while(window.isOpen())
-    {
-		int x,y;
+        int x,y;                                                    //Coordinates for points
+      
         Event event;
-        while(window.pollEvent(event))
+        while (window.pollEvent(event))
         {
-            if(event.type == Event::Closed) window.close();
-		}
-
-        if(!point_input_done)
-        {
-            if(event.type == Event::MouseButtonPressed && !left_click_pressed)
+            if (event.type == Event::Closed)                        //Close for red X 
             {
-				x = event.mouseButton.x;
-				y = event.mouseButton.y;
-				RectangleShape* ndot = new RectangleShape;
-				*ndot = dot1;
-				ndot->setPosition(x,y);
-                initial_points.push_back(*ndot);
-				left_click_pressed = true;
+                window.close();
             }
-
-            if(Keyboard::isKeyPressed(Keyboard::Space) && !space_pressed)
-            {
-                addMiddlePoints(&initial_points);
-                space_pressed = true;
-            }
-
-            if(Keyboard::isKeyPressed(Keyboard::Return))
-            {
-                point_input_done = true;
-            }
-
-            if(left_click_pressed && !Mouse::isButtonPressed(Mouse::Left))
-                left_click_pressed = false;
-
-            if(space_pressed && !Keyboard::isKeyPressed(Keyboard::Space))
-                space_pressed = false;
-
-            //drawVectorPoints(&initial_points);
         }
-        else
+        //ESC TO CLOSE
+        if (Keyboard::isKeyPressed(Keyboard::Escape))               //ESC TO CLOSE
         {
-            if(delay_timer.getElapsedTime().asMicroseconds() > delay)
-            {
-                addPoints(&initial_points, &points, add_points_count);
-
-                delay_timer.restart();
-            }
-			
-
-            //drawVectorPoints(&initial_points);
-            //drawVectorPoints(&points);
+            window.close();
         }
-		window.draw(text);
+
+        /***************************************************************************
+         First 3 inputs + 1 to start
+        ***************************************************************************/
+
+        if (acceptInput && initialDotCounter<5)                            //Loops to get click input 4 times
+        {
+            if (event.type == Event::MouseButtonPressed)
+            {
+                RectangleShape* ndot = new RectangleShape;          //new dot
+                x = event.mouseButton.x;                            //GET X THEN Y
+                y = event.mouseButton.y;                           
+                *ndot = dot1;
+                ndot->setPosition(x, y);                            //SET DOT X,Y                              
+                initialDotCounter++;                                       //INCREMENT
+                acceptInput = false;                                //AVOID 100 MPH
+                dotList.push_back(*ndot);                           //Push in vector
+            }
+        }
+        if (acceptInput && dotCounter > 3000)                       //RESET PART
+        {                                                           //RESET if COUNTER>3000
+            if (event.type == Event::MouseButtonPressed)
+            {
+                dotList.clear();                                    //vector emptied
+                initialDotCounter = 0;
+                dotCounter = 0;                                     //counter reset
+                RectangleShape* ndot = new RectangleShape;          //rest of block is same as block above
+                x = event.mouseButton.x;        
+                y = event.mouseButton.y;       
+                *ndot = dot1;
+                ndot->setPosition(x, y);                                    
+                initialDotCounter++;                   
+                acceptInput = false;            
+                dotList.push_back(*ndot);
+            }
+        }
+        if (dotCounter >= 6 || Keyboard::isKeyPressed(Keyboard::Return))
+        {
+            RectangleShape* ndot = new RectangleShape;            
+            ndot->setSize(Vector2f(1,1));
+            //ndot->setFillColor(Color::White);
+            rng = rand() % (3);
+            rng2 = rand() % (4);
+            rng3 = rand() % (5);
+            for(int i = 0; i < initialDotCounter; i++)
+            {
+                ndot->setFillColor(pink);
+                temp = dotList.at(i).getPosition();                     
+                temp2 = dotList.at(dotList.size() - 1).getPosition();   
+                temp.x = temp.x + temp2.x;                              
+                temp.x = temp.x / 2;
+                temp.y = temp.y + temp2.y;
+                temp.y = temp.y / 2;                                    
+                ndot->setPosition(temp);                                
+                dotList.push_back(*ndot);                               
+                dotCounter++;
+            }
+            /**if (rng == 0)
+            {
+                ndot->setFillColor(pink);
+                temp = dotList.at(0).getPosition();                     
+                temp2 = dotList.at(dotList.size() - 1).getPosition();   
+                temp.x = temp.x + temp2.x;                              
+                temp.x = temp.x / 2;
+                temp.y = temp.y + temp2.y;
+                temp.y = temp.y / 2;                                    
+                ndot->setPosition(temp);                                
+                dotList.push_back(*ndot);                               
+                dotCounter++;
+            }
+            else if (rng == 1)                                          
+            {
+                ndot->setFillColor(blue);
+                temp = dotList.at(1).getPosition();
+                temp2 = dotList.at(dotList.size() - 1).getPosition();
+                temp.x = temp.x + temp2.x;
+                temp.x = temp.x / 2;
+                temp.y = temp.y + temp2.y;
+                temp.y = temp.y / 2;
+                ndot->setPosition(temp);
+                dotList.push_back(*ndot);
+                dotCounter++;
+            }
+            else if (rng == 2)
+            {   
+                ndot->setFillColor(green);
+                temp = dotList.at(2).getPosition();
+                temp2 = dotList.at(dotList.size() - 1).getPosition();
+                temp.x = temp.x + temp2.x;
+                temp.x = temp.x / 2;
+                temp.y = temp.y + temp2.y;
+                temp.y = temp.y / 2;
+                ndot->setPosition(temp);
+                dotList.push_back(*ndot);
+                dotCounter++;
+            }*/
+        }
+
+        if (event.type == Event::MouseButtonReleased)               //Controls clicks
+        {
+            acceptInput = true;
+        }
+
+        text.setString("Welcome to Chaos Game!!! \n   Choose 3 points for triangle \n  Choose 4 points for Quadrilateral \n  Choose 5 points for Pentogram");
+
+        stringstream ss;
+        ss << "Dot counter: " << dotCounter;
+        dotText.setString(ss.str());
+                  
+        window.clear();                                              //draw
+        window.draw(text);
+        window.draw(dotText);
+        for (int i = 0;i < dotList.size();i++)     
+        {
+            window.draw(dotList.at(i));
+        }
         window.display();
-        //usleep(10000);
-
-        if(Keyboard::isKeyPressed(Keyboard::Q)) window.close();
     }
-
-    return 0;
 }
