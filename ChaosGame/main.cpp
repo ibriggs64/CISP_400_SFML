@@ -1,3 +1,8 @@
+//Iain Briggs. No partner. Everything in this file. Availability for infinite vertices. Choices for distance factor given.
+//Up to 20 vertices looks fine on the lowest distance factor given. Anything past ends up turning into a blob for obvious reasons.
+//Vertices are placed as white dots while the chaos dots are purple.
+
+
 #include <SFML/Graphics.hpp>
 #include <unistd.h>
 #include <sstream>
@@ -12,22 +17,6 @@ float lerp(float a, float b, float f)
 {
     return a + f * (b - a);
 }
-/*void addPoints(vector<RectangleShape> points, int add_points_count, float f, int dotCounter, int n, Vector2f temp, Vector2f temp2, int rng)
-{
-    for(long unsigned int i=0; i < add_points_count; i++)
-        {
-            RectangleShape* tempDot = new RectangleShape;
-            rng = rand() % (n);
-            tempDot->setSize(Vector2f(1.5,1.5));
-            temp = points.at(rng).getPosition();
-            temp2 = points.at(points.size() - 1).getPosition();
-            temp.x = lerp(temp.x, temp2.x, f);
-            temp.y = lerp(temp.y, temp2.y, f);
-            tempDot->setPosition(temp);
-            points.push_back(*tempDot);
-            dotCounter++;
-        }
-}*/
 
 int main()
 {
@@ -46,10 +35,9 @@ int main()
     RectangleShape dots;
     dots.setSize( Vector2f (2,2));
     Color red(255, 0, 0), blue(0, 0, 255), green(0, 255, 0), yellow(255, 255, 0), purple(127, 0, 255), orange(255,128,0), teal(0,128,128), pink(255,192,203), brown(150,75,0), aqua(0,255,255);
+    vector<Color> rgb{red,orange,yellow,green,teal,blue,purple,pink,aqua,brown};
     dots.setFillColor(Color::White);               
     Vector2f temp,temp2;    
-    //vector<Color> rgb = {red, orange, brown, yellow, green, teal, aqua, blue, purple, pink};
-    //vector<RectangleShape> initial_points;
     int add_points_count = 10;
     vector<RectangleShape> points;
     bool is_points_input_end = false;
@@ -57,7 +45,6 @@ int main()
     float f = 0.5;
     vector<RectangleShape> initial_points;
     int rng;
-
     while(window.isOpen())
     {
         int x,y;
@@ -168,7 +155,7 @@ int main()
         }
         if(dotCounter == 0)
         {
-            text.setString("Chaos Game: \n Q = 0.5 distance factor. \n W = 0.4 distance factor. \n E = 0.35 distance factor. \n R = 0.33 distance factor. \n T = 0.3 distance factor. \n Y = 0.25 distance factor. \n U = 0.2 distance factor. \n I = 0.15 distance factor.");
+            text.setString("Chaos Game: \n Q = 0.5 distance factor. \n W = 0.4 distance factor. \n E = 0.375 distance factor. \n R = 0.33 distance factor. \n T = 0.3 distance factor. \n Y = 0.25 distance factor. \n U = 0.2 distance factor. \n I = 0.15 distance factor.");
         }
         if(dotCounter > 0)
         {
