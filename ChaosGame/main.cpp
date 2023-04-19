@@ -1,8 +1,10 @@
-//Iain Briggs. No partner :( did get some help from Jordan M. and Eduardo C. on lerp function and text (my text originally wasn't going through at all)
-#include <iostream>
+#include <SFML/Graphics.hpp>
+#include <unistd.h>
 #include <sstream>
 #include <cstdlib>
-#include <SFML/Graphics.hpp>
+#include <time.h>
+#include <vector>
+#include <iostream>
 using namespace sf;
 using namespace std;
 
@@ -10,6 +12,22 @@ float lerp(float a, float b, float f)
 {
     return a + f * (b - a);
 }
+/*void addPoints(vector<RectangleShape> points, int add_points_count, float f, int dotCounter, int n, Vector2f temp, Vector2f temp2, int rng)
+{
+    for(long unsigned int i=0; i < add_points_count; i++)
+        {
+            RectangleShape* tempDot = new RectangleShape;
+            rng = rand() % (n);
+            tempDot->setSize(Vector2f(1.5,1.5));
+            temp = points.at(rng).getPosition();
+            temp2 = points.at(points.size() - 1).getPosition();
+            temp.x = lerp(temp.x, temp2.x, f);
+            temp.y = lerp(temp.y, temp2.y, f);
+            tempDot->setPosition(temp);
+            points.push_back(*tempDot);
+            dotCounter++;
+        }
+}*/
 
 int main()
 {
@@ -27,597 +45,134 @@ int main()
     int dotCounter = 0; //counts dots and to send to bottom left corner
     RectangleShape dots;
     dots.setSize( Vector2f (2,2));
-    dots.setFillColor(Color::White);
-    vector<RectangleShape> dotList;
-    bool acceptClicks = true;                
-    Vector2f temp,temp2;    
     Color red(255, 0, 0), blue(0, 0, 255), green(0, 255, 0), yellow(255, 255, 0), purple(127, 0, 255), orange(255,128,0), teal(0,128,128), pink(255,192,203), brown(150,75,0), aqua(0,255,255);
-    vector<Color> rgb = {red, orange, brown, yellow, green, teal, aqua, blue, purple, pink};
-    bool isTri = false, square = false, pentagon = false, hexagon = false, heptagon = false, octagon = false, nonagon = false, decagon = false;
+    dots.setFillColor(Color::White);               
+    Vector2f temp,temp2;    
+    //vector<Color> rgb = {red, orange, brown, yellow, green, teal, aqua, blue, purple, pink};
+    //vector<RectangleShape> initial_points;
+    int add_points_count = 10;
+    vector<RectangleShape> points;
+    bool is_points_input_end = false;
+    bool mouse_left_pressed = false;
+    float f = 0.5;
+    vector<RectangleShape> initial_points;
     int rng;
 
-    while (window.isOpen())    
+    while(window.isOpen())
     {
-        int x,y; 
+        int x,y;
         Event event;
-        while (window.pollEvent(event))
+        while(window.pollEvent(event))
         {
-            if (event.type == Event::Closed)
-            {
-                window.close();
-            }
+            if(event.type == Event::Closed) window.close();
         }
-        if (Keyboard::isKeyPressed(Keyboard::Escape)) 
-        {
-            window.close();
-        }
+        window.clear();
         if(Event::KeyPressed)
         {
             if(event.key.code == Keyboard::Q)
             {
-                isTri = true;
+                f = 0.5;
             }
         }
         if(Event::KeyPressed)
         {
             if(event.key.code == Keyboard::W)
             {
-                square = true;
+                f = 0.4;
             }
         }
         if(Event::KeyPressed)
         {
             if(event.key.code == Keyboard::E)
             {
-                pentagon = true;
+                f = 0.375;
             }
         }
         if(Event::KeyPressed)
         {
             if(event.key.code == Keyboard::R)
             {
-                hexagon = true;
+                f = 0.33;
             }
         }
         if(Event::KeyPressed)
         {
             if(event.key.code == Keyboard::T)
             {
-                heptagon = true;
+                f = 0.3;
             }
         }
         if(Event::KeyPressed)
         {
             if(event.key.code == Keyboard::Y)
             {
-                octagon = true;
+                f = 0.25;
             }
         }
         if(Event::KeyPressed)
         {
             if(event.key.code == Keyboard::U)
             {
-                nonagon = true;
+                f = 0.2;
             }
         }
         if(Event::KeyPressed)
         {
             if(event.key.code == Keyboard::I)
             {
-                decagon = true;
+                f = 0.15;
             }
         }
-        if ( isTri == true && square == false && pentagon == false && hexagon == false && heptagon == false && octagon == false && nonagon == false && decagon == false && dotCounter < 4 && acceptClicks)                            
+        if(!is_points_input_end)
         {
-            if (event.type == Event::MouseButtonPressed)
+            if(event.type == Event::MouseButtonPressed && !mouse_left_pressed)
             {
-                RectangleShape* tempDot = new RectangleShape;       
-                x = event.mouseButton.x;                          
-                y = event.mouseButton.y;                          
+                mouse_left_pressed = true;
+                x = event.mouseButton.x;
+                y = event.mouseButton.y;
+                RectangleShape* tempDot = new RectangleShape;
                 *tempDot = dots;
-                tempDot->setPosition(x, y);                                                     
-                dotCounter++;                                 
-                acceptClicks = false;                              
-                dotList.push_back(*tempDot);   
-            }                   
-        }
-        if (isTri == false && square == true && pentagon == false && hexagon == false && heptagon == false && octagon == false && nonagon == false && decagon == false && dotCounter < 5 && acceptClicks)                            
-        {
-            if (event.type == Event::MouseButtonPressed)
-            {
-                RectangleShape* tempDot = new RectangleShape;       
-                x = event.mouseButton.x;                          
-                y = event.mouseButton.y;                          
-                *tempDot = dots;
-                tempDot->setPosition(x, y);                                                     
-                dotCounter++;                                 
-                acceptClicks = false;                              
-                dotList.push_back(*tempDot);                           
-            }
-        }
-        if (isTri == false && square == false && pentagon == true && hexagon == false && heptagon == false && octagon == false && nonagon == false && decagon == false && dotCounter < 6 && acceptClicks)                            
-        {
-            if (event.type == Event::MouseButtonPressed)
-            {
-                RectangleShape* tempDot = new RectangleShape;       
-                x = event.mouseButton.x;                          
-                y = event.mouseButton.y;                          
-                *tempDot = dots;
-                tempDot->setPosition(x, y);                                                     
-                dotCounter++;                                 
-                acceptClicks = false;                              
-                dotList.push_back(*tempDot);                           
-            }
-        }
-        if (isTri == false && square == false && pentagon == false && hexagon == true && heptagon == false && octagon == false && nonagon == false && decagon == false && dotCounter < 7 && acceptClicks)                            
-        {
-            if (event.type == Event::MouseButtonPressed)
-            {
-                RectangleShape* tempDot = new RectangleShape;       
-                x = event.mouseButton.x;                          
-                y = event.mouseButton.y;                          
-                *tempDot = dots;
-                tempDot->setPosition(x, y);                                                     
-                dotCounter++;                                 
-                acceptClicks = false;                              
-                dotList.push_back(*tempDot);                           
-            }
-        }
-        if ( isTri == false && square == false && pentagon == false && hexagon == false && heptagon == true && octagon == false && nonagon == false && decagon == false && dotCounter < 8 && acceptClicks)                             
-        {
-            if (event.type == Event::MouseButtonPressed)
-            {
-                RectangleShape* tempDot = new RectangleShape;       
-                x = event.mouseButton.x;                          
-                y = event.mouseButton.y;                          
-                *tempDot = dots;
-                tempDot->setPosition(x, y);                                                     
-                dotCounter++;                                 
-                acceptClicks = false;                              
-                dotList.push_back(*tempDot);                           
-            }
-        }
-        if (isTri == false && square == false && pentagon == false && hexagon == false && heptagon == false && octagon == true && nonagon == false && decagon == false && dotCounter < 9 && acceptClicks)                            
-        {
-            if (event.type == Event::MouseButtonPressed)
-            {
-                RectangleShape* tempDot = new RectangleShape;       
-                x = event.mouseButton.x;                          
-                y = event.mouseButton.y;                          
-                *tempDot = dots;
-                tempDot->setPosition(x, y);                                                     
-                dotCounter++;                                 
-                acceptClicks = false;                              
-                dotList.push_back(*tempDot);                           
-            }
-        }
-        if (isTri == false && square == false && pentagon == false && hexagon == false && heptagon == false && octagon == false && nonagon == true && decagon == false && dotCounter < 10 && acceptClicks)                            
-        {
-            if (event.type == Event::MouseButtonPressed)
-            {
-                RectangleShape* tempDot = new RectangleShape;       
-                x = event.mouseButton.x;                          
-                y = event.mouseButton.y;                          
-                *tempDot = dots;
-                tempDot->setPosition(x, y);                                                     
-                dotCounter++;                                 
-                acceptClicks = false;                              
-                dotList.push_back(*tempDot);                           
-            }
-        }
-        if (isTri == false && square == false && pentagon == false && hexagon == false && heptagon == false && octagon == false && nonagon == false && decagon == true && dotCounter < 11 && acceptClicks)                            
-        {
-            if (event.type == Event::MouseButtonPressed)
-            {
-                RectangleShape* tempDot = new RectangleShape;       
-                x = event.mouseButton.x;                          
-                y = event.mouseButton.y;                          
-                *tempDot = dots;
-                tempDot->setPosition(x, y);                                                     
-                dotCounter++;                                 
-                acceptClicks = false;                              
-                dotList.push_back(*tempDot);                           
-            }
-        }
-        if (isTri == true && square == false && pentagon == false && hexagon == false && heptagon == false && octagon == false && nonagon == false && decagon == false && Event::KeyPressed) //Press Enter/Return to start process.
-        {
-            if(event.key.code == Keyboard::Enter) //Multiple of the same function to speed up the process.
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (3);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.5);
-                temp.y = lerp(temp.y, temp2.y, 0.5);
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
+                tempDot->setPosition(x,y);
                 dotCounter++;
+                initial_points.push_back(*tempDot);
+                points.push_back(*tempDot);
             }
-            if(event.key.code == Keyboard::Enter)
+            if(Keyboard::isKeyPressed(Keyboard::Return))
             {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (3);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.5);
-                temp.y = lerp(temp.y, temp2.y, 0.5);
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
+                is_points_input_end = true;
             }
-            if(event.key.code == Keyboard::Enter)
+
+            if(mouse_left_pressed && event.type == Event::MouseButtonReleased)
             {
-                RectangleShape* tempDot = new RectangleShape;            
+                mouse_left_pressed = false;
+            }
+
+        }
+        else
+        {
+            int n = initial_points.size();
+            for(long unsigned int i=0; i < add_points_count; i++)
+            {
+                RectangleShape* tempDot = new RectangleShape;
+                rng = rand() % (n);
                 tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (3);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.5);
-                temp.y = lerp(temp.y, temp2.y, 0.5);
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
+                temp = points.at(rng).getPosition();
+                temp2 = points.at(points.size() - 1).getPosition();
+                temp.x = lerp(temp.x, temp2.x, f);
+                temp.y = lerp(temp.y, temp2.y, f);
+                tempDot->setPosition(temp);
+                tempDot->setFillColor(purple);
+                points.push_back(*tempDot);
                 dotCounter++;
             }
         }
-        if (isTri == false && square == true && pentagon == false && hexagon == false && heptagon == false && octagon == false && nonagon == false && decagon == false && Event::KeyPressed) //Press Enter/Return to start process.
+        if(dotCounter == 0)
         {
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (4);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.475);
-                temp.y = lerp(temp.y, temp2.y, 0.475);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (4);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.475);
-                temp.y = lerp(temp.y, temp2.y, 0.475);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (4);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.475);
-                temp.y = lerp(temp.y, temp2.y, 0.475);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
+            text.setString("Chaos Game: \n Q = 0.5 distance factor. \n W = 0.4 distance factor. \n E = 0.35 distance factor. \n R = 0.33 distance factor. \n T = 0.3 distance factor. \n Y = 0.25 distance factor. \n U = 0.2 distance factor. \n I = 0.15 distance factor.");
         }
-        if (isTri == false && square == false && pentagon == true && hexagon == false && heptagon == false && octagon == false && nonagon == false && decagon == false && Event::KeyPressed) //Press Enter/Return to start process.
+        if(dotCounter > 0)
         {
-            if(event.key.code == Keyboard::Enter) 
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (5);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.45);
-                temp.y = lerp(temp.y, temp2.y, 0.45);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (5);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.45);
-                temp.y = lerp(temp.y, temp2.y, 0.45);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (5);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.45);
-                temp.y = lerp(temp.y, temp2.y, 0.45);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-        }
-        if (isTri == false && square == false && pentagon == false && hexagon == true && heptagon == false && octagon == false && nonagon == false && decagon == false && Event::KeyPressed) //Press Enter/Return to start process.
-        {
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (6);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.4);
-                temp.y = lerp(temp.y, temp2.y, 0.4);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (6);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.4);
-                temp.y = lerp(temp.y, temp2.y, 0.4);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (6);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.4);
-                temp.y = lerp(temp.y, temp2.y, 0.4);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-        }
-        if (isTri == false && square == false && pentagon == false && hexagon == false && heptagon == true && octagon == false && nonagon == false && decagon == false && Event::KeyPressed) //Press Enter/Return to start process.
-        {
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (7);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.35);
-                temp.y = lerp(temp.y, temp2.y, 0.35);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (7);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.35);
-                temp.y = lerp(temp.y, temp2.y, 0.35);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (7);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.35);
-                temp.y = lerp(temp.y, temp2.y, 0.35);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-        }
-        if (isTri == false && square == false && pentagon == false && hexagon == false && heptagon == false && octagon == true && nonagon == false && decagon == false && Event::KeyPressed) //Press Enter/Return to start process.
-        {
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (8);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.33);
-                temp.y = lerp(temp.y, temp2.y, 0.33);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (8);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.33);
-                temp.y = lerp(temp.y, temp2.y, 0.33);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (8);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.33);
-                temp.y = lerp(temp.y, temp2.y, 0.33);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-        }
-        if (isTri == false && square == false && pentagon == false && hexagon == false && heptagon == false && octagon == false && nonagon == true && decagon == false && Event::KeyPressed) //Press Enter/Return to start process.
-        {
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (9);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.3);
-                temp.y = lerp(temp.y, temp2.y, 0.3);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (9);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.3);
-                temp.y = lerp(temp.y, temp2.y, 0.3);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (9);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.3);
-                temp.y = lerp(temp.y, temp2.y, 0.3);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-        }
-        if (isTri == false && square == false && pentagon == false && hexagon == false && heptagon == false && octagon == false && nonagon == false && decagon == true && Event::KeyPressed) //Press Enter/Return to start process.
-        {
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (10);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.25);
-                temp.y = lerp(temp.y, temp2.y, 0.25);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (10);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.25);
-                temp.y = lerp(temp.y, temp2.y, 0.25);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-            if(event.key.code == Keyboard::Enter)
-            {
-                RectangleShape* tempDot = new RectangleShape;            
-                tempDot->setSize(Vector2f(1.5,1.5));
-                rng = rand() % (10);
-                tempDot->setFillColor(rgb.at(rng));
-                temp = dotList.at(rng).getPosition();                     
-                temp2 = dotList.at(dotList.size() - 1).getPosition();   
-                temp.x = lerp(temp.x, temp2.x, 0.25);
-                temp.y = lerp(temp.y, temp2.y, 0.25);  
-                tempDot->setPosition(temp);                                
-                dotList.push_back(*tempDot);                               
-                dotCounter++;
-            }
-        }
-        if (event.type == Event::MouseButtonReleased)     
-        {
-            acceptClicks = true;
-        }
-        if(dotCounter == 0 && isTri == false && square == false && pentagon == false && hexagon == false && heptagon == false && octagon == false && nonagon == false && decagon == false)
-        {
-            text.setString("Chaos Game: \n Q = triangle. \n W = Quadrilateral. \n E = Pentogram. \n R = Hexagon. \n T = Heptagon. \n Y = Octagon. \n U = Nonagon. \n I = Decagon.");
-        }
-        if(isTri == true && dotCounter < 4)
-        {
-            text.setString("Triangle: Select 3 vertices. \n Press Enter to start. \n Press Enter again if it stops.");
-        }
-        if(square == true && dotCounter < 5)
-        {
-            text.setString("Quadrilateral: Select 4 vertices. \n Press Enter to start. \n Press Enter again if it stops.");
-        }
-        if(pentagon == true && dotCounter < 6)
-        {
-            text.setString("Pentagon: Select 5 vertices. \n Press Enter to start. \n Press Enter again if it stops.");
-        }
-        if(hexagon == true && dotCounter < 7)
-        {
-            text.setString("Hexagon: Select 6 vertices. \n Press Enter to start. \n Press Enter again if it stops.");
-        }
-        if(heptagon == true && dotCounter < 8)
-        {
-            text.setString("Heptagon: Select 7 vertices. \n Press Enter to start. \n Press Enter again if it stops.");
-        }
-        if(octagon == true && dotCounter < 9)
-        {
-            text.setString("Octagon: Select 8 vertices. \n Press Enter to start. \n Press Enter again if it stops.");
-        }
-        if(nonagon == true && dotCounter < 10)
-        {
-            text.setString("Nonagon: Select 9 vertices. \n Press Enter to start. \n Press Enter again if it stops.");
-        }
-        if(decagon == true && dotCounter < 11)
-        {
-            text.setString("Decagon: Select 10 vertices. \n Press Enter to start. \n Press Enter again if it stops.");
+            text.setString("Create as many vertices as you want. \n Press Enter when you are ready to start.");
         }
         stringstream sstream;
         sstream << "Amount of dots: " << dotCounter;
@@ -625,11 +180,12 @@ int main()
         window.clear();                                            
         window.draw(text);
         window.draw(textForDots);
-        for (int i = 0;i < dotList.size();i++)     
+        for (int i = 0;i < points.size();i++)     
         {
-            window.draw(dotList.at(i));
+            window.draw(points.at(i));
         }
         window.display();
+        if(Keyboard::isKeyPressed(Keyboard::Escape)) window.close();
     }
+    return 0;
 }
-//Had some help from others since I had no partner. Helped me with the text output to the screen and the lerp function.
