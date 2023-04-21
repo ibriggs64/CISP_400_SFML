@@ -59,65 +59,38 @@ int main()
             {
                 f = 0.5;
             }
-        }
-        if(Event::KeyPressed)
-        {
             if(event.key.code == Keyboard::W)
             {
                 f = 0.45;
             }
-        }
-        if(Event::KeyPressed)
-        {
             if(event.key.code == Keyboard::E)
             {
                 f = 0.4;
             }
-        }
-        if(Event::KeyPressed)
-        {
             if(event.key.code == Keyboard::R)
             {
                 f = 0.375;
             }
-        }
-        if(Event::KeyPressed)
-        {
             if(event.key.code == Keyboard::T)
             {
                 f = 0.33;
             }
-        }
-        if(Event::KeyPressed)
-        {
             if(event.key.code == Keyboard::Y)
             {
                 f = 0.3;
             }
-        }
-        if(Event::KeyPressed)
-        {
             if(event.key.code == Keyboard::U)
             {
                 f = 0.25;
             }
-        }
-        if(Event::KeyPressed)
-        {
             if(event.key.code == Keyboard::I)
             {
                 f = 0.2;
             }
-        }
-        if(Event::KeyPressed)
-        {
             if(event.key.code == Keyboard::O)
             {
                 f = 0.15;
             }
-        }
-        if(Event::KeyPressed)
-        {
             if(event.key.code == Keyboard::P)
             {
                 f = 0.1;
@@ -151,7 +124,7 @@ int main()
         else
         {
             int n = initial_points.size();
-            for(long unsigned int i=0; i < add_points_count; i++)
+            for(float i=0; i < add_points_count; i++)
             {
                 RectangleShape* tempDot = new RectangleShape;
                 rng = rand() % (n);
@@ -180,7 +153,7 @@ int main()
         window.clear();                                            
         window.draw(text);
         window.draw(textForDots);
-        for (int i = 0;i < points.size();i++)     
+        for (float i = 0;i < points.size();i++)     
         {
             window.draw(points.at(i));
         }
