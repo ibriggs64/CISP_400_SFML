@@ -1,52 +1,90 @@
-#include <SFML/Graphics.hpp>
-#include <unistd.h>
-#include <sstream>
-#include <cstdlib>
-#include <time.h>
-#include <vector>
-#include <iostream>
-#include <cmath>
 #include "ComplexPlane.h"
-using namespace sf;
 using namespace std;
+using namespace sf;
 
 int main()
 {
-    VideoMode vm(VideoMode::getDesktopMode().width, VideoMode::getDesktopMode().height);
-    size_t pixels = VideoMode::getDesktopMode().width * VideoMode::getDesktopMode().height;
-    float aspectRatio = VideoMode::getDesktopMode().width / VideoMode::getDesktopMode().height;
-    RenderWindow window(vm, "Mandelbrot", Style::Default);
-    ComplexPlane plane(aspectRatio);
-    Font font;
-    Text text;
-    VertexArray(Points, pixels);
-    enum state {CALCULATING, DISPLAYING};
-    state(0);
-    while(window.isOpen())
-    {
-        Event event;
-        while(window.pollEvent(event))
-        {
-            if(event.type == Event::Closed) window.close();
-            if(event.type == Event::MouseButtonPressed)
+	float ratio;
+	Vector2f resolution;
+	resolution.x = VideoMode::getDesktopMode().width;
+	resolution.y = VideoMode::getDesktopMode().height;
+	ratio = resolution.y / resolution.x;
+	RenderWindow window(VideoMode(resolution.x, resolution.y), "Mandelbrot", Style::Default);
+	ComplexPlane plane(ratio);
+	Text text;	
+	Font font;
+	font.loadFromFile("fonts/DS-DIGIT.TTF");
+	text.setFont(font);
+	text.setCharacterSize(25);
+	text.setPosition(50, 50);
+	text.setFillColor(Color::Red);
+	VertexArray background;
+	background.setPrimitiveType(Points);
+	background.resize(resolution.x * resolution.y);
+	enum action { CALCULATING, DISPLAYING };
+	action now = CALCULATING;
+	while (window.isOpen())
+	{
+		Vector2f coord, vcoord;
+		Vector2i mouseP, vmouseP;
+
+		Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == Event::Closed) 
+			{
+				window.close();
+			}
+			if (event.type == sf::Event::MouseButtonPressed) 
             {
-                Vector2f mouse = window.mapPixelToCoords(Vector2i(event.mouseButton.x, event.mouseButton.y));
-                if(Mouse::isButtonPressed(Mouse::Left))
+				if (event.mouseButton.button == Mouse::Left) 
                 {
-                    plane.zoomIn();
-                    plane.setCenter(mouse);
-                }
-                if(Mouse::isButtonPressed(Mouse::Right))
+					plane.zoomIn();
+					coord = window.mapPixelToCoords(Mouse::getPosition(), plane.getView());
+					plane.setCenter(coord);
+					now = CALCULATING;
+				}
+				if (event.mouseButton.button == Mouse::Right) 
                 {
-                    plane.zoomOut();
-                    plane.setCenter(mouse);
-                }
-                state(0);
-            }
-            if(event.type == Event::MouseMoved)
+					plane.zoomOut();
+					coord = window.mapPixelToCoords(Mouse::getPosition(), plane.getView());
+					plane.setCenter(coord);
+					now = CALCULATING;
+				}
+			}
+			if (event.type == sf::Event::MouseMoved) 
             {
-                Vector2f mouse = window.mapPixelToCoords(Vector2i(event.mouseMove.x, event.mouseMove.y));
-            }
-        }
-    }
+				vcoord = window.mapPixelToCoords(Mouse::getPosition(), plane.getView());
+				plane.setMouseLocation(vcoord);
+			}
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Escape))
+		{
+			window.close();
+		}
+		if (now == CALCULATING)
+		{
+			for (float j = 0; j < resolution.x; j++)
+			{
+				for (float i = 0; i < resolution.y; i++)
+				{
+					background[j + i * resolution.x].position = { (float)j,(float)i };
+					float counter = 0;
+					Vector2i coord(j, i);
+					Vector2f worldCord;
+					worldCord = window.mapPixelToCoords(coord, plane.getView());
+					counter = plane.countIterations(worldCord);
+					Uint8 r, g, b;
+					plane.iterationsToRGB(counter, r, g, b);
+					background[j + i * resolution.x].color = { r,g,b };
+				}
+			}
+			now = DISPLAYING;
+		}
+		plane.loadText(text);
+		window.clear();
+		window.draw(background);
+		window.draw(text);
+		window.display();
+	}
 }
