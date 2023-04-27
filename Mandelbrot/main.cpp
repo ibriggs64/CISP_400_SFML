@@ -1,16 +1,18 @@
+//Iain Briggs. No partner. Mandelbrot Set
+
 #include "ComplexPlane.h"
 using namespace std;
 using namespace sf;
 
 int main()
 {
-	float ratio;
+	float aspectRatio;
 	Vector2f resolution;
 	resolution.x = VideoMode::getDesktopMode().width;
 	resolution.y = VideoMode::getDesktopMode().height;
-	ratio = resolution.y / resolution.x;
+	aspectRatio = resolution.y / resolution.x;
 	RenderWindow window(VideoMode(resolution.x, resolution.y), "Mandelbrot", Style::Default);
-	ComplexPlane plane(ratio);
+	ComplexPlane plane(aspectRatio);
 	Text text;	
 	Font font;
 	font.loadFromFile("fonts/DS-DIGIT.TTF");
@@ -26,8 +28,6 @@ int main()
 	while (window.isOpen())
 	{
 		Vector2f coord, vcoord;
-		Vector2i mouseP, vmouseP;
-
 		Event event;
 		while (window.pollEvent(event))
 		{
