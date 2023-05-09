@@ -9,27 +9,19 @@ namespace Matrices
     {
         rows = _rows;
         cols = _cols;
-        a.resize(rows);
-        for (size_t i = 0; i < rows; i++)
-        {
-            a[i].resize(cols);
-            for (size_t j = 0; j < cols; j++)
-            {
-                a[i][j] = 0;
-            }
-        }
-        a.resize(rows, vector<double>(cols, 0));
+        a.resize(rows, vector<double>(cols));
     }
 
     ostream& operator<<(ostream& os, const Matrix& a)
     {
         for (int i = 0; i < a.getRows(); i++)
         {
+            os << "\n";
             for (int j = 0; j < a.getCols(); j++)
             {
-                os << setw(15) << a(i, j) << " ";
+                os << setw(10) << a(i, j) << " ";
             }
-            os << endl;
+            os << "\n";
         }
         return os;
     }
@@ -73,10 +65,6 @@ namespace Matrices
 
     bool operator==(const Matrix& a, const Matrix& b)
     {
-        if (a.getCols() != b.getCols() || b.getCols() != b.getCols())
-        {
-            return false;
-        }
         for (int i = 0; i < a.getRows(); i++)
         {
             for (int j = 0; j < a.getCols(); j++)
@@ -85,33 +73,48 @@ namespace Matrices
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
             }
         }
+        return false;
     }
 
     bool operator!=(const Matrix& a, const Matrix& b)
     {
-        if (a.getCols() == b.getCols() || b.getCols() == b.getCols())
-        {
-            return false;
-        }
         for (int i = 0; i < a.getRows(); i++)
         {
             for (int j = 0; j < a.getCols(); j++)
             {
-                if (fabs(a(i, j) - b(i, j)) < 0.001)
-                {
-                    return false;
-                }
-                else
+                if (fabs(a(i, j) - b(i, j)) > 0.001)
                 {
                     return true;
                 }
             }
+        }
+        return false;
+    }
+
+    RotationMatrix::RotationMatrix(double theta) : Matrix(2, 2)
+    {
+        a[0][0] = cos(theta);
+        a[0][1] = -sin(theta);
+        a[1][0] = sin(theta);
+        a[1][1] = cos(theta);
+    }
+
+    ScalingMatrix::ScalingMatrix(double scale) : Matrix(2, 2)
+    {  
+        a[0][0] = scale;
+        a[0][1] = 0;
+        a[1][0] = 0;
+        a[1][1] = scale;
+    }
+
+    TranslationMatrix::TranslationMatrix(double xShift, double yShift, int nCols) : Matrix(2, nCols)
+    {
+        for(int i = 0; i < nCols; i++)
+        {
+            a[0][i] = xShift;
+            a[1][i] = yShift;
         }
     }
 }

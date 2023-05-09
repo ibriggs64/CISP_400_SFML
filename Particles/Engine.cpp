@@ -2,10 +2,7 @@
 
 Engine::Engine()
 {
-    Vector2f resolution;
-    resolution.x = VideoMode::getDesktopMode().width;
-    resolution.y = VideoMode::getDesktopMode().height;
-    m_Window.create(VideoMode(resolution.x, resolution.y), "Particles", Style::Default);
+    m_Window.create(VideoMode::getDesktopMode(), "Particles", Style::Fullscreen);
 }
 
 void Engine::run()
@@ -29,42 +26,43 @@ void Engine::input()
     Event event;
     while (m_Window.pollEvent(event))
     {
-        if(event.type == Event::Closed)
+        switch(event.type)
         {
-            m_Window.close();
-        }
-        if(Keyboard::isKeyPressed(Keyboard::Escape))
-        {
-            m_Window.close();
-        }
-        if(event.type == Event::MouseButtonPressed)
-        {
-            if(event.mouseButton.button == Mouse::Left)
-            {
-                Vector2f coord;
-                coord = m_Window.mapPixelToCoords(Mouse::getPosition());
-                for(int i = 0; i < 5; i++)
+            case Event::Closed:
+                m_Window.close();
+                break;
+            case Event::KeyPressed:
+                if(event.key.code == Keyboard::Escape)
                 {
-                    float numPoints = 25 + (rand() % 50);
-                    Particle p2(m_Window, numPoints, coord);
-                    m_particles.push_back(p2);
+                    m_Window.close();
                 }
-            }
+                break;
+            case Event::MouseButtonPressed:
+                if(event.mouseButton.button == Mouse::Left)
+                {
+                    for(int i = 0; i < 5; i++)
+                    {
+                        int numPoints = rand() % 26 + 25;
+                        m_particles.emplace_back(m_Window, numPoints, Mouse::getPosition(m_Window));
+                    }
+                }
+                break;
         }
     }
 }
 
 void Engine::update(float dtAsSeconds)
 {
-    for(int i = 0; i < m_particles.size(); i++)
+    for(auto i = m_particles.begin(); i != m_particles.end();)
     {
-        if(p2.getTTL() > 0.0)
+        if(i->getTTL() > 0.0)
         {
-            m_particles.at(i).update(i);
+            i->update(dtAsSeconds);
+            i++;
         }
         else
         {
-            
+            i = m_particles.erase(i);
         }
     }
 }
