@@ -2,7 +2,7 @@
 
 Engine::Engine()
 {
-    m_Window.create(VideoMode::getDesktopMode(), "Particles", Style::Fullscreen);
+    m_Window.create(VideoMode::getDesktopMode(), "Particles", Style::Default);
 }
 
 void Engine::run()
